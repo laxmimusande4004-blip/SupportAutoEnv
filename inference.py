@@ -2,20 +2,21 @@ import os
 import json
 import requests
 from typing import List, Dict, Any
-from huggingface_hub import InferenceClient
+from openai import OpenAI
 
-# Configuration
-API_URL = os.getenv("API_URL", "http://localhost:8000")
-HF_TOKEN = os.getenv("HF_TOKEN")  # Hugging Face token from hf.co/settings/tokens
+# Pre-Submission Checklist Configuration
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:7860")
+MODEL_NAME = os.getenv("MODEL_NAME", "meta-llama/Llama-3.1-8B-Instruct")
+HF_TOKEN = os.getenv("HF_TOKEN") # No default allowed per checklist
 
-# Use Meta's Llama model via HuggingFace Inference API
-client = InferenceClient(
-    model="meta-llama/Llama-3.1-8B-Instruct",
-    token=HF_TOKEN
+# Initialize OpenAI client with Hugging Face endpoint
+client = OpenAI(
+    base_url="https://api-inference.huggingface.co/v1/",
+    api_key=HF_TOKEN
 )
 
 def get_agent_response(ticket_text: str, difficulty: str) -> Dict[str, Any]:
-    """Baseline agent using Meta's Llama model via HuggingFace Inference API."""
+    """Agent using OpenAI-compatible client with Meta's Llama model."""
     prompt = f"""You are a customer support AI assistant.
 Current Ticket: "{ticket_text}"
 Difficulty: {difficulty}
@@ -34,81 +35,63 @@ Important: Include keywords like 'refund', 'replacement', 'return label', 'apolo
 Respond with ONLY the JSON object, no other text."""
 
     response = client.chat.completions.create(
+        model=MODEL_NAME,
         messages=[{"role": "user", "content": prompt}],
         max_tokens=500,
-        temperature=0.1  # Low temperature for consistent structured output
+        temperature=0.1
     )
 
     raw_content = response.choices[0].message.content.strip()
     
-    # Handle cases where the model wraps JSON in markdown code blocks
+    # Strip markdown if present
     if raw_content.startswith("```"):
-        lines = raw_content.split("\n")
-        raw_content = "\n".join(lines[1:-1])  # Strip ```json and ``` markers
+        raw_content = raw_content.split("```")[1]
+        if raw_content.startswith("json"):
+            raw_content = raw_content[4:]
     
     return json.loads(raw_content)
 
 def main():
-    total_score = 0.0
-    tasks_run = 0
-
-    print(f"Starting baseline inference at {API_URL}...")
-    print(f"Using model: meta-llama/Llama-3.1-8B-Instruct via HuggingFace\n")
-
-    # Get total available tasks from backend
-    root_resp = requests.get(f"{API_URL}/")
-    root_data = root_resp.json()
-    task_ids = root_data.get("tasks", [])
-    tasks_count = len(task_ids)
+    # [START]
+    print("[START]")
+    
+    try:
+        # Get total available tasks from backend
+        root_resp = requests.get(f"{API_BASE_URL}/api")
+        root_resp.raise_for_status()
+        root_data = root_resp.json()
+        task_ids = root_data.get("tasks", [])
+        tasks_count = len(task_ids)
+    except Exception as e:
+        print(f"Failed to connect to environment at {API_BASE_URL}: {e}")
+        return
 
     for i in range(tasks_count):
-        print(f"\n{'='*50}")
-        print(f"--- Task {i+1}/{tasks_count} ---")
+        # [STEP]
+        print(f"[STEP] {i+1}/{tasks_count}")
 
-        # Reset environment
-        reset_resp = requests.post(f"{API_URL}/reset")
-        obs = reset_resp.json()
-        ticket_text = obs["ticket_text"]
-        difficulty = obs["metadata"]["difficulty"]
-
-        print(f"Task ID:    {obs['metadata'].get('task_id', 'N/A')}")
-        print(f"Difficulty: {difficulty}")
-        print(f"Ticket:     {ticket_text[:80]}...")
-
-        # Get AI response from Meta Llama
         try:
+            # Reset environment
+            reset_resp = requests.post(f"{API_BASE_URL}/reset")
+            obs = reset_resp.json()
+            ticket_text = obs["ticket_text"]
+            difficulty = obs["metadata"]["difficulty"]
+
+            # Get AI response
             ai_action_data = get_agent_response(ticket_text, difficulty)
-            print(f"AI Action:  {ai_action_data}")
+
+            # Step in environment
+            requests.post(f"{API_BASE_URL}/step", json=ai_action_data)
         except Exception as e:
-            print(f"AI Error: {e}")
-            ai_action_data = {}
+            # Continue to next step even if one fails
+            pass
 
-        # Step in environment
-        step_resp = requests.post(f"{API_URL}/step", json=ai_action_data)
-        result = step_resp.json()
-
-        reward = result["reward"]["score"]
-        feedback = result["reward"]["feedback"]
-
-        print(f"Score:      {reward}")
-        print(f"Feedback:   {feedback}")
-
-        total_score += reward
-        tasks_run += 1
-
-    avg_score = total_score / tasks_run if tasks_run > 0 else 0
-    print(f"\n{'='*50}")
-    print(f"RESULTS SUMMARY")
-    print(f"{'='*50}")
-    print(f"Tasks Completed:    {tasks_run}/{tasks_count}")
-    print(f"Total Score:        {total_score:.2f}")
-    print(f"Average Score:      {avg_score:.2f}")
-    print(f"Model Used:         meta-llama/Llama-3.1-8B-Instruct")
-    print(f"{'='*50}")
+    # [END]
+    print("[END]")
 
 if __name__ == "__main__":
     if not HF_TOKEN:
         print("Error: HF_TOKEN environment variable not set.")
-        print("Get your token from: https://huggingface.co/settings/tokens")
     else:
         main()
+
