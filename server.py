@@ -1,5 +1,7 @@
 import json
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from models import SupportAction, SupportObservation, SupportReward
 from env import SupportEnv
 from typing import Any, Dict
@@ -29,6 +31,12 @@ env = SupportEnv()
 
 @app.get("/")
 async def root():
+    """Serve the frontend dashboard when visiting the root URL."""
+    return FileResponse("index.html")
+
+@app.get("/api")
+async def api_info():
+    """API info endpoint for programmatic access."""
     from graders import TASKS
     return {
         "message": "SupportAutoEnv is running",
@@ -61,6 +69,18 @@ async def step(action: SupportAction) -> Dict[str, Any]:
 @app.get("/state")
 async def get_state() -> Dict[str, Any]:
     return {"state": env.state()}
+
+# Serve static files (CSS, JS)
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+# Serve app.js and style.css directly
+@app.get("/app.js")
+async def serve_js():
+    return FileResponse("app.js")
+
+@app.get("/style.css")
+async def serve_css():
+    return FileResponse("style.css")
 
 # ============================================================
 # WebSocket Endpoint (OpenEnv persistent session support)
@@ -126,4 +146,4 @@ async def websocket_endpoint(websocket: WebSocket):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=7860)
