@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SupportAutoEnv | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+        <header>
+            <div class="logo-area">
+                <div class="logo-icon"></div>
+                <h1>SupportAutoEnv</h1>
+            </div>
+            <div class="status-badge" id="env-status">
+                <span class="pulse"></span> Connected
+            </div>
+        </header>
+
+        <main>
+            <section class="top-row">
+                <div class="card env-info-card glass">
+                    <h3>Environment Info</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Domain</label>
+                            <span>Customer Support</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Task ID</label>
+                            <span id="task-id">---</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Difficulty</label>
+                            <span id="difficulty" class="badge">---</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card score-card glass">
+                    <h3>Performance</h3>
+                    <div class="score-display">
+                        <div class="progress-circle" id="score-circle">
+                            <span id="score-text">0.0</span>
+                        </div>
+                        <div class="score-meta">
+                            <label>Current Reward</label>
+                            <p id="reward-feedback">Ready to start...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="middle-row">
+                <div class="card ticket-card glass">
+                    <div class="card-header">
+                        <h3>Current Ticket</h3>
+                    </div>
+                    <div class="ticket-content" id="ticket-text">
+                        Waiting for reset...
+                    </div>
+                </div>
+            </section>
+
+            <section class="bottom-row">
+                <div class="card action-card glass">
+                    <h3>Control Center</h3>
+                    <div class="button-group">
+                        <button id="reset-btn" class="btn primary">Reset Environment</button>
+                        <button id="demo-btn" class="btn secondary">Simulate Agent</button>
+                    </div>
+                    <div class="manual-action">
+                        <textarea id="manual-step" placeholder="Manual Action (JSON)..."></textarea>
+                        <button id="step-btn" class="btn outline">Send Action</button>
+                    </div>
+                </div>
+
+                <div class="card history-card glass">
+                    <h3>Action History</h3>
+                    <div class="history-list" id="history-list">
+                        <!-- History items will appear here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 SupportAutoEnv | OpenEnv Standard Compliant</p>
+        </footer>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

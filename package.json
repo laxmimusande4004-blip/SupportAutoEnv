@@ -1,0 +1,13 @@
+{
+  "name": "support-auto-env",
+  "version": "1.0.0",
+  "description": "Customer Support Automation for OpenEnv",
+  "main": "server.py",
+  "scripts": {
+    "dev": "python server.py",
+    "test": "python inference.py",
+    "validate": "openenv validate openenv.yaml"
+  },
+  "author": "",
+  "license": "ISC"
+}

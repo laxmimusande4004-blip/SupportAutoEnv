@@ -1,0 +1,14 @@
+spec_version: 1
+version: "0.1.0"
+name: SupportAutoEnv
+type: space
+runtime: fastapi
+app: server:app
+port: 8000
+description: "A customer support automation environment for OpenEnv. Includes tasks for classification, entity extraction, and resolution planning."
+action: SupportAction
+observation: SupportObservation
+metadata:
+  domain: customer_support
+  author: antgravity-assistant
+  tags: ["openenv", "customer-support", "nlp"]
