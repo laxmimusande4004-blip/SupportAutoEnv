@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "supportautoenv"
+version = "0.2.0"
+description = "A customer support automation environment for OpenEnv hackathon."
+readme = "README.md"
+authors = [{ name = "Laxmimusande4004-blip" }]
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+    "huggingface_hub",
+    "websockets",
+    "requests",
+    "openai"
+]
+
+[tool.setuptools]
+packages = ["."]
