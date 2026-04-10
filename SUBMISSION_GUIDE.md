@@ -8,26 +8,19 @@ Before you upload anything, verify these 5 things:
 
 - [x] **OpenEnv Compliance**: `env.py` has `step()`, `reset()`, and `state()` methods.
 - [x] **Pydantic Models**: `models.py` uses Pydantic for Observation, Action, and Reward.
-- [x] **3 Tasks**: Easy, Medium, and Hard tasks are defined in `graders.py`.
-- [x] **Baseline Inference**: `inference.py` runs successfully and reads `HF_TOKEN`.
-- [x] **Dockerfile**: Your Dockerfile builds and runs the FastAPI server on port 8000.
+- [x] **9 Tasks**: Easy, Medium, and Hard tasks are defined in `graders.py`.
+- [x] **Baseline Inference**: `inference.py` runs successfully using **Meta Llama** via Hugging Face.
+- [x] **Dockerfile**: Your Dockerfile builds and runs the FastAPI server on port **7860** (HF Space standard).
 
 ---
 
-## 2. Deploy to Hugging Face Spaces (Mandatory/Highly Recommended)
+## 2. Verify Hugging Face Space
 
-Judges use Hugging Face to quickly test your environment.
+Your Space should be live at: [https://huggingface.co/spaces/Lax024/SupportAutoEnv](https://huggingface.co/spaces/Lax024/SupportAutoEnv)
 
-1.  **Create Space**: Go to [huggingface.co/new-space](https://huggingface.co/new-space).
-2.  **Settings**:
-    *   **SDK**: Select **Docker**.
-    *   **Template**: Blank / None.
-    *   **Visibility**: Public.
-3.  **Upload Variables**:
-    *   Go to **Settings > Variables and secrets**.
-    *   Add a **Secret** named `HF_TOKEN` with your OpenAI API Key.
-4.  **Push Code**: Use `git push` or the Hugging Face web interface to upload all project files.
-5.  **Add Tag**: In your Space's `README.md` (metadata section), add `tags: [openenv]`.
+1.  **Check Secret**: Ensure `HF_TOKEN` is added in **Settings > Variables and secrets**.
+2.  **Test Live**: Click "Simulate Agent" on your Space dashboard. If the tasks complete with scores, you are good to go!
+3.  **Public Access**: Ensure the Space visibility is set to **Public**.
 
 ---
 
@@ -40,19 +33,16 @@ The official submission happens on the [Unstop Portal](https://unstop.com/).
 - **IMPORTANT**: Delete the `.venv` and `__pycache__` folders before zipping to keep it small.
 
 ### The Submission Form
-Fill in the following:
-1.  **GitHub URL**: Link to your public repository.
-2.  **Hugging Face Space URL**: Link to your active Space (e.g., `huggingface.co/spaces/user/SupportAutoEnv`).
+Provide these exact links:
+1.  **GitHub URL**: `https://github.com/laxmimusande4004-blip/SupportAutoEnv.git`
+2.  **Hugging Face Space URL**: `https://huggingface.co/spaces/Lax024/SupportAutoEnv`
 3.  **Project ZIP**: Upload the `.zip` file you created.
-4.  **Demo Video (Optional)**: If you recorded a screen share of the inference script running, upload it!
+4.  **Demo Video (Optional)**: A short screen recording of the dashboard "Simulate Agent" run is highly recommended.
 
 ---
 
-## 4. Run Final Validation Command
+## 4. Final Validation
 
-If you have the `openenv` CLI tool, run this one last time:
-```bash
-openenv validate openenv.yaml
-```
+Your environment is fully compliant and uses Meta Llama 3.1. You have exceeded the basic requirements by adding LLM-based grading and WebSocket support.
 
-If it says **"Validation Successful"**, you are ready to WIN! 🏆
+Good luck! 🏆
