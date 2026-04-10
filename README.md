@@ -1,3 +1,12 @@
+---
+title: SupportAutoEnv
+emoji: 🧞
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+---
+
 # SupportAutoEnv: Customer Support Automation for OpenEnv
 
 SupportAutoEnv is a standardized execution environment for training and evaluating AI agents on real-world customer support tasks. Built on the **OpenEnv** specification by Meta & Hugging Face, it provides a range of scenarios from simple classification to complex resolution planning.
